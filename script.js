@@ -1,13 +1,10 @@
-
 async function sendMessage() {
     const input = document.getElementById("userInput");
     const chatBox = document.getElementById("chatBox");
 
     const message = input.value.trim();
 
-    if (message === "") {
-        return;
-    }
+    if (message === "") return;
 
     const userMessage = document.createElement("div");
     userMessage.className = "message user-message";
@@ -24,13 +21,31 @@ async function sendMessage() {
     chatBox.scrollTop = chatBox.scrollHeight;
     saveChat();
 
+    // Kusoma historia ya mazungumzo
+    const history = Array.from(
+        chatBox.querySelectorAll(".user-message, .ai-message")
+    )
+    .filter(element =>
+        element.textContent !== "MUKII'S AI inafikiria... 🤖"
+    )
+    .map(element => ({
+        role: element.classList.contains("user-message")
+            ? "user"
+            : "assistant",
+        content: element.textContent
+    }))
+    .slice(-20);
+
     try {
         const res = await fetch("/api/chat", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ message: message })
+            body: JSON.stringify({
+                message: message,
+                history: history
+            })
         });
 
         const data = await res.json();
@@ -44,7 +59,8 @@ async function sendMessage() {
 
     } catch (error) {
         console.error(error);
-        aiMessage.textContent = "Samahani, kuna tatizo la kuwasiliana na server.";
+        aiMessage.textContent =
+            "Samahani, kuna tatizo la kuwasiliana na server.";
     }
 
     chatBox.scrollTop = chatBox.scrollHeight;
@@ -61,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Rudisha chat iliyohifadhiwa
+    // KURUDISHA CHAT ILIYOHIFADHIWA
     const savedChat = localStorage.getItem("mukiiChat");
 
     if (savedChat) {
@@ -69,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-// HIFADHI CHAT
+// KUHIFADHI CHAT
 function saveChat() {
     const chatBox = document.getElementById("chatBox");
     localStorage.setItem("mukiiChat", chatBox.innerHTML);
