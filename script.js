@@ -1,3 +1,4 @@
+
 async function sendMessage() {
     const input = document.getElementById("userInput");
     const chatBox = document.getElementById("chatBox");
@@ -15,22 +16,21 @@ async function sendMessage() {
 
     input.value = "";
 
-    chatBox.scrollTop = chatBox.scrollHeight;
-
     const aiMessage = document.createElement("div");
     aiMessage.className = "message ai-message";
     aiMessage.textContent = "MUKII'S AI inafikiria... 🤖";
     chatBox.appendChild(aiMessage);
-     saveChat();
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+    saveChat();
+
     try {
         const res = await fetch("/api/chat", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({
-                message: message
-            })
+            body: JSON.stringify({ message: message })
         });
 
         const data = await res.json();
@@ -40,49 +40,37 @@ async function sendMessage() {
         }
 
         aiMessage.textContent = data.reply;
-       saveChat();
+        saveChat();
+
     } catch (error) {
         console.error(error);
-
-        aiMessage.textContent =
-            "MUKII'S AI bado haina API key. 🤖";
+        aiMessage.textContent = "Samahani, kuna tatizo la kuwasiliana na server.";
     }
 
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-
-// KUTUMA UJUMBE KWA KUBONYEZA ENTER
+// KUTUMA UJUMBE KWA ENTER
 document.addEventListener("DOMContentLoaded", function () {
-
     const input = document.getElementById("userInput");
 
     input.addEventListener("keydown", function (event) {
-
         if (event.key === "Enter") {
             event.preventDefault();
             sendMessage();
         }
-
     });
-// Hifadhi chat kwenye browser
+
+    // Rudisha chat iliyohifadhiwa
+    const savedChat = localStorage.getItem("mukiiChat");
+
+    if (savedChat) {
+        document.getElementById("chatBox").innerHTML = savedChat;
+    }
+});
+
+// HIFADHI CHAT
 function saveChat() {
     const chatBox = document.getElementById("chatBox");
     localStorage.setItem("mukiiChat", chatBox.innerHTML);
 }
-
-// Rudisha chat iliyohifadhiwa
-document.addEventListener("DOMContentLoaded", function () {
-    const savedChat = localStorage.getItem("mukiiChat");
-
-    if (savedChat) {
-        document.getElementById("chatBox").innerHTML = savedChat;
-    }
-});
-document.addEventListener("DOMContentLoaded", function () {
-    const savedChat = localStorage.getItem("mukiiChat");
-
-    if (savedChat) {
-        document.getElementById("chatBox").innerHTML = savedChat;
-    }
-});
