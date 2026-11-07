@@ -65,13 +65,20 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
     });
-
-});// Hifadhi chat kwenye browser
-function saveChat() {
+// Hifadhi chat kwenye browser
 function saveChat() {
     const chatBox = document.getElementById("chatBox");
     localStorage.setItem("mukiiChat", chatBox.innerHTML);
-}/ Rudisha chat iliyohifadhiwa
+}
+
+// Rudisha chat iliyohifadhiwa
+document.addEventListener("DOMContentLoaded", function () {
+    const savedChat = localStorage.getItem("mukiiChat");
+
+    if (savedChat) {
+        document.getElementById("chatBox").innerHTML = savedChat;
+    }
+});
 document.addEventListener("DOMContentLoaded", function () {
     const savedChat = localStorage.getItem("mukiiChat");
 
